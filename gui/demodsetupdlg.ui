@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CDemodSetupDlg</class>
+ <widget class="QDialog" name="CDemodSetupDlg">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>351</width>
+    <height>309</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Demodulation Setup</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>280</y>
+     <width>81</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Close</set>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="ModegroupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>101</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Mode</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>21</y>
+      <width>56</width>
+      <height>157</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QRadioButton" name="AMradioButton">
+       <property name="text">
+        <string>AM</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="SAMradioButton">
+       <property name="text">
+        <string>SAM</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="FMradioButton">
+       <property name="text">
+        <string>FM</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="USBradioButton">
+       <property name="text">
+        <string>USB</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="LSBradioButton">
+       <property name="text">
+        <string>LSB</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="CWUradioButton">
+       <property name="text">
+        <string>CWU</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="CWLradioButton">
+       <property name="text">
+        <string>CWL</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QSpinBox" name="spinBoxOffset">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>250</y>
+     <width>151</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>120</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="suffix">
+    <string> Hz</string>
+   </property>
+   <property name="prefix">
+    <string>CW Offset </string>
+   </property>
+   <property name="minimum">
+    <number>-1000</number>
+   </property>
+   <property name="maximum">
+    <number>1000</number>
+   </property>
+   <property name="singleStep">
+    <number>100</number>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBoxAGC">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>10</y>
+     <width>221</width>
+     <height>201</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>AGC</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <widget class="QCheckBox" name="checkBoxAgcOn">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>81</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>AGC On</string>
+    </property>
+   </widget>
+   <widget class="CSliderCtrl" name="frameSlope">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>191</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="lineWidth">
+     <number>2</number>
+    </property>
+    <property name="midLineWidth">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="CSliderCtrl" name="frameThresh">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>191</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="lineWidth">
+     <number>2</number>
+    </property>
+   </widget>
+   <widget class="CSliderCtrl" name="frameDecay">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>150</y>
+      <width>191</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="lineWidth">
+     <number>2</number>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBoxHang">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>30</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="toolTip">
+     <string>Use Hang Timer instead of Decay</string>
+    </property>
+    <property name="text">
+     <string>Use Hang Timer</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QSlider" name="horizontalSliderSquelch">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>220</y>
+     <width>160</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="value">
+    <number>50</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="tickPosition">
+    <enum>QSlider::TicksBelow</enum>
+   </property>
+   <property name="tickInterval">
+    <number>10</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labelSquelch">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>220</y>
+     <width>91</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="toolTip">
+    <string>FM Squelch Control</string>
+   </property>
+   <property name="text">
+    <string>FM Squelch</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CSliderCtrl</class>
+   <extends>QFrame</extends>
+   <header>gui/sliderctrl.h</header>
+   <container>1</container>
+   <slots>
+    <slot>valueChanged(int)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>AMradioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>ModeChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>51</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>148</x>
+     <y>24</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>SAMradioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>ModeChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>66</x>
+     <y>63</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>145</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>FMradioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>ModeChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>55</x>
+     <y>88</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>127</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>USBradioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>ModeChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>53</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>241</x>
+     <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>LSBradioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>ModeChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>44</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>178</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CWUradioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>ModeChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>64</x>
+     <y>156</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>124</x>
+     <y>143</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>CWLradioButton</sender>
+   <signal>clicked()</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>ModeChanged()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>35</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>35</x>
+     <y>217</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxOffset</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>OnOffsetChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>171</x>
+     <y>250</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>104</x>
+     <y>222</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxAgcOn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>OnAgcOn(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>194</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>165</x>
+     <y>5</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxHang</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>OnHangOn(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>284</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>285</x>
+     <y>3</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>horizontalSliderSquelch</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CDemodSetupDlg</receiver>
+   <slot>OnSquelchChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>255</x>
+     <y>225</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>314</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>ModeChanged()</slot>
+  <slot>OnOffsetChanged(int)</slot>
+  <slot>OnAgcOn(bool)</slot>
+  <slot>OnHangOn(bool)</slot>
+  <slot>OnSquelchChanged(int)</slot>
+ </slots>
+</ui>

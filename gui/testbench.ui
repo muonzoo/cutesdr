@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CTestBench</class>
+ <widget class="QDialog" name="CTestBench">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>634</width>
+    <height>518</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Test Bench</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QFrame" name="frameGraph">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>1</number>
+     </property>
+     <property name="midLineWidth">
+      <number>0</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="checkBoxTime">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>17</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Time Domain</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBoxPeak">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>110</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Enable Peak</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinBoxRate">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>20</height>
+        </size>
+       </property>
+       <property name="suffix">
+        <string> Hz</string>
+       </property>
+       <property name="prefix">
+        <string>Update </string>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>15</number>
+       </property>
+       <property name="singleStep">
+        <number>1</number>
+       </property>
+       <property name="value">
+        <number>10</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pushButtonReset">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>75</width>
+         <height>25</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Reset</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboBoxProfile">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>160</width>
+         <height>22</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>301</width>
+         <height>140</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>Signal Generator</string>
+       </property>
+       <widget class="QLabel" name="labelFreq">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>50</y>
+          <width>71</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>70</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Panel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="text">
+         <string> Frequency</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxSweep">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>151</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="suffix">
+         <string> Hz/Sec</string>
+        </property>
+        <property name="prefix">
+         <string>Sweep </string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="singleStep">
+         <number>10</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxStop">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>101</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="suffix">
+         <string> KHz</string>
+        </property>
+        <property name="prefix">
+         <string>Stop </string>
+        </property>
+        <property name="minimum">
+         <number>-1000</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxStart">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>101</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="suffix">
+         <string> KHz</string>
+        </property>
+        <property name="prefix">
+         <string>Start </string>
+        </property>
+        <property name="minimum">
+         <number>-1000</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxNoise">
+        <property name="geometry">
+         <rect>
+          <x>30</x>
+          <y>110</y>
+          <width>91</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="suffix">
+         <string> dB</string>
+        </property>
+        <property name="prefix">
+         <string>Noise </string>
+        </property>
+        <property name="minimum">
+         <number>-160</number>
+        </property>
+        <property name="maximum">
+         <number>0</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxAmp">
+        <property name="geometry">
+         <rect>
+          <x>120</x>
+          <y>20</y>
+          <width>90</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>90</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="suffix">
+         <string> dB</string>
+        </property>
+        <property name="prefix">
+         <string>Pwr </string>
+        </property>
+        <property name="minimum">
+         <number>-160</number>
+        </property>
+        <property name="maximum">
+         <number>0</number>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="checkBoxGen">
+        <property name="geometry">
+         <rect>
+          <x>220</x>
+          <y>20</y>
+          <width>70</width>
+          <height>17</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>70</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Gen On</string>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxPulseWidth">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>80</y>
+          <width>111</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>110</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="suffix">
+         <string> mS</string>
+        </property>
+        <property name="prefix">
+         <string>Width </string>
+        </property>
+        <property name="maximum">
+         <number>500</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxPulsePeriod">
+        <property name="geometry">
+         <rect>
+          <x>170</x>
+          <y>110</y>
+          <width>111</width>
+          <height>22</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="suffix">
+         <string> mS</string>
+        </property>
+        <property name="prefix">
+         <string>Period </string>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label">
+        <property name="geometry">
+         <rect>
+          <x>220</x>
+          <y>60</y>
+          <width>61</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Pulse Mode</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTextEdit" name="textEdit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>140</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>150</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+       <property name="acceptRichText">
+        <bool>false</bool>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::NoTextInteraction</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>150</width>
+         <height>141</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>Time Domain Display</string>
+       </property>
+       <widget class="QSpinBox" name="spinBoxVertRange">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>131</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="suffix">
+         <string> Range</string>
+        </property>
+        <property name="prefix">
+         <string>Vert </string>
+        </property>
+        <property name="minimum">
+         <number>10</number>
+        </property>
+        <property name="maximum">
+         <number>66000</number>
+        </property>
+        <property name="singleStep">
+         <number>100</number>
+        </property>
+        <property name="value">
+         <number>1000</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxHorzSpan">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>50</y>
+          <width>131</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="suffix">
+         <string> mSec</string>
+        </property>
+        <property name="prefix">
+         <string>Horz </string>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
+        </property>
+        <property name="singleStep">
+         <number>1</number>
+        </property>
+       </widget>
+       <widget class="QSpinBox" name="spinBoxThresh">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>131</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="suffix">
+         <string/>
+        </property>
+        <property name="prefix">
+         <string>Trig Level </string>
+        </property>
+        <property name="minimum">
+         <number>-30000</number>
+        </property>
+        <property name="maximum">
+         <number>30000</number>
+        </property>
+        <property name="singleStep">
+         <number>10</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="comboBoxTrig">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>110</y>
+          <width>131</width>
+          <height>22</height>
+         </rect>
+        </property>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>checkBoxTime</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnTimeDisplay(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>116</x>
+     <y>354</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>40</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxRate</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnDisplayRate(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>279</x>
+     <y>355</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>234</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxVertRange</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnVertRange(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>613</x>
+     <y>406</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>539</x>
+     <y>345</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxHorzSpan</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnHorzSpan(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>613</x>
+     <y>436</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>541</x>
+     <y>374</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBoxTrig</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnTriggerMode(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>613</x>
+     <y>498</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>530</x>
+     <y>404</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonReset</sender>
+   <signal>clicked()</signal>
+   <receiver>CTestBench</receiver>
+   <slot>Reset()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>392</x>
+     <y>358</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>231</x>
+     <y>309</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxStart</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnSweepStart(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>115</x>
+     <y>406</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>75</x>
+     <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxStop</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnSweepStop(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>436</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>7</x>
+     <y>370</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxSweep</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnSweepRate(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>52</x>
+     <y>466</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>442</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxThresh</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnTrigLevel(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>613</x>
+     <y>466</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>470</x>
+     <y>469</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboBoxProfile</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnProfile(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>590</x>
+     <y>356</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>608</x>
+     <y>390</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxAmp</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnSignalPwr(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>179</x>
+     <y>399</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>163</x>
+     <y>353</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxGen</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnGenOn(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>392</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>238</x>
+     <y>361</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxNoise</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnNoisePwr(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>493</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>511</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxPulseWidth</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnPulseWidth(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>271</x>
+     <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>306</x>
+     <y>344</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>spinBoxPulsePeriod</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnPulsePeriod(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>226</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>296</x>
+     <y>512</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkBoxPeak</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>CTestBench</receiver>
+   <slot>OnEnablePeak(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>184</x>
+     <y>343</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>360</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>ResetGenerator(int)</slot>
+  <slot>Reset()</slot>
+  <slot>OnTimeDisplay(bool)</slot>
+  <slot>OnDisplayRate(int)</slot>
+  <slot>OnVertRange(int)</slot>
+  <slot>OnHorzSpan(int)</slot>
+  <slot>OnTriggerMode(int)</slot>
+  <slot>OnSweepStart(int)</slot>
+  <slot>OnSweepStop(int)</slot>
+  <slot>OnSweepRate(int)</slot>
+  <slot>OnTrigLevel(int)</slot>
+  <slot>OnProfile(int)</slot>
+  <slot>OnGenSelect(int)</slot>
+  <slot>OnSignalPwr(int)</slot>
+  <slot>OnGenOn(bool)</slot>
+  <slot>OnNoisePwr(int)</slot>
+  <slot>OnPulseWidth(int)</slot>
+  <slot>OnPulsePeriod(int)</slot>
+  <slot>OnEnablePeak(bool)</slot>
+ </slots>
+</ui>
