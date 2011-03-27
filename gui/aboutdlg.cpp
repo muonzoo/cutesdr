@@ -50,8 +50,7 @@ CAboutDlg::CAboutDlg(QWidget *parent, QString Revision) :
 	m_Str += "\n\r        Copyright 2010  Moe Wheatley\n\r\n\r";
 	m_Str += "Example Interface Program for Networked\n\r";
 	m_Str += "RFSPACE Software Defined Receivers.\n\r";
-	m_Str += "Source Code and Documentation on http://sourceforge.net/ \n\r";
-	m_Str += "Search for 'CuteSDR'. \n\r";
+	m_Str += "Source Code and Documentation on http://sourceforge.net/projects/cutesdr/ \n\r";
 	m_Str += "Licensed under Simplified BSD License.\n\r";
 	ui->labelTxt->setText(m_Str);
 }
