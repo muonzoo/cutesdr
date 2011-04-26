@@ -4,6 +4,7 @@
 // History:
 //	2010-09-15  Initial creation MSW
 //	2011-03-27  Initial release
+//	2011-04-16  Added Frequency range logic for optional down converter modules
 /////////////////////////////////////////////////////////////////////
 #ifndef SDRINTERFACE_H
 #define SDRINTERFACE_H
@@ -14,6 +15,7 @@
 #include "dsp/demodulator.h"
 #include "dsp/noiseproc.h"
 #include "interface/soundout.h"
+#include "interface/protocoldefs.h"
 
 
 /////////////////////////////////////////////////////////////////////
@@ -65,11 +67,12 @@ public:
 	void ScreenUpdateDone(){m_ScreenUpateFinished = TRUE;}
 	void KeepAlive();
 	void ManageNCOSpurOffsets( eNCOSPURCMD cmd, double* pNCONullValueI,  double* pNCONullValueQ);
+	void SetRx2Parameters(double Rx2Gain, double Rx2Phase);
 
 	//calls to these functions promt a signal in response
 	void GetSdrInfo();
 	void ReqStatus();
-	void SetRxFreq(quint64 freq);
+	quint64 SetRxFreq(quint64 freq);
 
 	//bunch of public members containing sdr related information and data
 	QString m_DeviceName;
@@ -87,6 +90,8 @@ public:
 
 	int GetRateError(){return m_pSoundCardOut->GetRateError();}
 	void SetVolume(qint32 vol){ m_pSoundCardOut->SetVolume(vol); }
+
+	void SetChannelMode(qint32 channelmode);
 
 	void SetSdrRfGain(qint32 gain);
 	qint32 GetSdrRfGain(){return m_RfGain;}
@@ -121,6 +126,7 @@ signals:
 	void NewStatus(int status);		//emitted when sdr status changes
 	void NewInfoData();				//emitted when sdr information is received after GetSdrInfo()
 	void NewFftData();				//emitted when new FFT data is available
+	void FreqChange(int freq);	//emitted if requested frequency has been clamped by radio
 
 private:
 	void SendAck(quint8 chan);
@@ -143,6 +149,13 @@ private:
 	qint32 m_RfGain;
 	qint32 m_SoundInIndex;
 	qint32 m_SoundOutIndex;
+	qint32 m_ChannelMode;
+	quint8 m_Channel;
+	quint64 m_CurrentFrequency;
+	quint64 m_BaseFrequencyRangeMin;
+	quint64 m_BaseFrequencyRangeMax;
+	quint64 m_OptionFrequencyRangeMin;
+	quint64 m_OptionFrequencyRangeMax;
 	double m_SampleRate;
 	double m_GainCalibrationOffset;
 	double m_DataBuf[MAX_FFT_SIZE*2];
@@ -150,6 +163,7 @@ private:
 	CAscpMsg m_TxMsg;
 	Cad6620 m_AD6620;
 	eRadioType m_RadioType;
+	eStatus m_Status;
 
 	bool m_NcoSpurCalActive;	//NCO spur reduction variables
 	qint32 m_NcoSpurCalCount;

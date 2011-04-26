@@ -9,6 +9,7 @@
 // History:
 //	2010-09-15  Initial creation MSW
 //	2011-03-27  Initial release
+//	2011-04-16  Added Frequency range logic for optional down converter modules
 /////////////////////////////////////////////////////////////////////
 
 //==========================================================================================
@@ -40,10 +41,8 @@
 //or implied, of Moe Wheatley.
 //==========================================================================================
 #include "interface/sdrinterface.h"
-#include "interface/protocoldefs.h"
 #include "gui/testbench.h"
 #include <QDebug>
-
 
 #define SPUR_CAL_MAXSAMPLES 300000
 #define MAX_SAMPLERATES 4
@@ -93,7 +92,6 @@ const quint32 NETSDR_MAXBW[MAX_SAMPLERATES] =
 const double NETSDR_SAMPLERATE[MAX_SAMPLERATES] =
 {
 	(80.0e6/1280.0),
-//	(80.0e6/640.0),
 	(80.0e6/320.0),
 	(80.0e6/128.0),
 	(80.0e6/40.0)
@@ -102,8 +100,6 @@ const double NETSDR_SAMPLERATE[MAX_SAMPLERATES] =
 const quint32 SDRIP_MAXBW[MAX_SAMPLERATES] =
 {
 	50000,
-//	200000,
-//	100000,
 	200000,
 	500000,
 	1800000
@@ -112,12 +108,11 @@ const quint32 SDRIP_MAXBW[MAX_SAMPLERATES] =
 const double SDRIP_SAMPLERATE[MAX_SAMPLERATES] =
 {
 	(80.0e6/1280.0),
-//	(80.0e6/400.0),
-//	(80.0e6/640.0),
 	(80.0e6/320.0),
 	(80.0e6/130.0),
 	(80.0e6/40.0)
 };
+
 
 /////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -142,11 +137,19 @@ CSdrInterface::CSdrInterface()
 	m_NCOSpurOffsetI = 0.0;
 	m_NCOSpurOffsetQ = 0.0;
 	m_MaxDisplayRate = 10;
+	m_CurrentFrequency = 0;
+	m_BaseFrequencyRangeMin = 0;		//load default frequency ranges
+	m_BaseFrequencyRangeMax = 30000000;
+	m_OptionFrequencyRangeMin = 0;
+	m_OptionFrequencyRangeMax = 30000000;
 	SetMaxDisplayRate(m_MaxDisplayRate);
 	m_ScreenUpateFinished = TRUE;
 	SetFftSize(4096);
 	SetFftAve(1);
 	m_pSoundCardOut = new CSoundOut(this);
+	m_Status = NOT_CONNECTED;
+	m_ChannelMode = CI_RX_CHAN_SETUP_SINGLE_1;	//default channel settings for NetSDR
+	m_Channel = CI_RX_CHAN_1;
 }
 
 CSdrInterface::~CSdrInterface()
@@ -229,6 +232,7 @@ void CSdrInterface::StopIO()
 ///////////////////////////////////////////////////////////////////////////////
 void CSdrInterface::SendIOStatus(int iostatus)
 {
+	m_Status = (eStatus)iostatus;
 	emit NewStatus( iostatus );
 }
 
@@ -239,9 +243,12 @@ void CSdrInterface::SendIOStatus(int iostatus)
 ////////////////////////////////////////////////////////////////////////
 void CSdrInterface::ParseAscpMsg(CAscpMsg *pMsg)
 {
+quint16 Length;
+quint32 tmp32;
 	pMsg->InitRxMsg();	//initialize receive msg object for read back
 	if( pMsg->GetType() == TYPE_TARG_RESP_CITEM )
-	{	// Is a message from DVAP in response to a request
+	{	// Is a message from SDR in response to a request
+//qDebug()<<"Msg "<<pMsg->GetCItem();
 		switch(pMsg->GetCItem())
 		{
 			case CI_GENERAL_INTERFACE_NAME:
@@ -286,12 +293,17 @@ void CSdrInterface::ParseAscpMsg(CAscpMsg *pMsg)
 					m_Running = false;
 				}
 				break;
+			case CI_GENERAL_OPTIONS:
+				break;
+			case CI_GENERAL_SECURITY_CODE:
+//qDebug()<<"security = "<<pMsg->GetParm16();
+				break;
 			case CI_GENERAL_STATUS_CODE:	//used as keepalive ack
 				m_KeepAliveCounter = 0;
 				break;
 			case CI_RX_FREQUENCY:
 				pMsg->GetParm8();
-//qDebug()<<"Rx Freq ="<<pMsg->GetParm32();
+				tmp32 = pMsg->GetParm32();
 				break;
 			case CI_RX_OUT_SAMPLE_RATE:
 				pMsg->GetParm8();
@@ -300,6 +312,32 @@ void CSdrInterface::ParseAscpMsg(CAscpMsg *pMsg)
 			case CI_GENERAL_PRODUCT_ID:
 				break;
 			case CI_UPDATE_MODE_PARAMS:
+				break;
+			default:
+				break;
+		}
+	}
+	else if( pMsg->GetType() == TYPE_TARG_RESP_CITEM_RANGE )
+	{	// Is a range message from SDR
+		switch( pMsg->GetCItem() )
+		{
+			case CI_RX_FREQUENCY:
+				Length = pMsg->GetLength();
+				pMsg->GetParm8();
+				m_BaseFrequencyRangeMin = (quint64)pMsg->GetParm32();
+				pMsg->GetParm8();
+				m_BaseFrequencyRangeMax = (quint64)pMsg->GetParm32();
+				pMsg->GetParm8();
+				m_OptionFrequencyRangeMin = m_BaseFrequencyRangeMin;	//set option range to base range
+				m_OptionFrequencyRangeMax = m_BaseFrequencyRangeMax;
+				if(Length>15)
+				{
+					m_OptionFrequencyRangeMin = (quint64)pMsg->GetParm32();
+					pMsg->GetParm8();
+					m_OptionFrequencyRangeMax = (quint64)pMsg->GetParm32();
+				}
+//qDebug()<<"Base range"<<m_BaseFrequencyRangeMin << m_BaseFrequencyRangeMax;
+//qDebug()<<"Option range"<<m_OptionFrequencyRangeMin << m_OptionFrequencyRangeMax;
 				break;
 			default:
 				break;
@@ -359,6 +397,42 @@ void CSdrInterface::SendAck(quint8 chan)
 	SendAscpMsg(&m_TxMsg);
 }
 
+void CSdrInterface::SetRx2Parameters(double Rx2Gain, double Rx2Phase)
+{
+quint16 gain;
+quint32 phase;
+//	qDebug()<<"Rx2Gain = "<<Rx2Gain <<" Rx2Phase = "<<Rx2Phase;
+	gain = (quint16)(Rx2Gain*32767.0);
+
+	m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
+	m_TxMsg.AddCItem(CI_RX_ADCGAIN);
+	m_TxMsg.AddParm8(CI_RX_CHAN_2);
+	m_TxMsg.AddParm16(0x7FFF);
+	SendAscpMsg(&m_TxMsg);
+
+	m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
+	m_TxMsg.AddCItem(CI_RX_ADCGAIN);
+	m_TxMsg.AddParm8(CI_RX_CHAN_1);
+	m_TxMsg.AddParm16(gain);
+	SendAscpMsg(&m_TxMsg);
+
+
+	phase = (quint32)( (Rx2Phase/360.0) * 4294967295.0);
+
+	m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
+	m_TxMsg.AddCItem(CI_RX_NCOPHASE);
+	m_TxMsg.AddParm8(CI_RX_CHAN_1);
+	m_TxMsg.AddParm32(0);
+	SendAscpMsg(&m_TxMsg);
+
+	m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
+	m_TxMsg.AddCItem(CI_RX_NCOPHASE);
+	m_TxMsg.AddParm8(CI_RX_CHAN_2);
+	m_TxMsg.AddParm32(phase);
+	SendAscpMsg(&m_TxMsg);
+
+	qDebug()<<"Gain = "<<gain <<" Rx2Phase = "<<phase;
+}
 
 /////////////////////////////////////////////////////////////////////
 // Called to request a bunch of general information from the SDR
@@ -382,6 +456,14 @@ void CSdrInterface::GetSdrInfo()
 	m_TxMsg.AddCItem(CI_GENERAL_HARDFIRM_VERSION);
 	m_TxMsg.AddParm8(1);
 	SendAscpMsg(&m_TxMsg);
+
+	if( (SDRIP==m_RadioType) || (NETSDR==m_RadioType) )
+	{
+		m_TxMsg.InitTxMsg(TYPE_HOST_REQ_CITEM_RANGE);
+		m_TxMsg.AddCItem(CI_RX_FREQUENCY);
+		m_TxMsg.AddParm8(CI_RX_CHAN_1);
+		SendAscpMsg(&m_TxMsg);
+	}
 }
 
 
@@ -393,6 +475,33 @@ void CSdrInterface::ReqStatus()
 	m_TxMsg.InitTxMsg(TYPE_HOST_REQ_CITEM);
 	m_TxMsg.AddCItem(CI_GENERAL_STATUS_CODE);
 	SendAscpMsg(&m_TxMsg);
+}
+
+
+/////////////////////////////////////////////////////////////////////
+// Called to set the channel mode
+/////////////////////////////////////////////////////////////////////
+void CSdrInterface::SetChannelMode(qint32 channelmode)
+{
+	m_ChannelMode = channelmode;
+	switch(m_ChannelMode)
+	{
+		case CI_RX_CHAN_SETUP_SINGLE_1:
+			m_Channel = CI_RX_CHAN_1;
+			break;
+		case CI_RX_CHAN_SETUP_SINGLE_2:
+			m_Channel = CI_RX_CHAN_2;
+			break;
+		case CI_RX_CHAN_SETUP_SINGLE_SUM:
+			m_Channel = CI_RX_CHAN_ALL;
+
+			break;
+		case CI_RX_CHAN_SETUP_SINGLE_DIF:
+			m_Channel = CI_RX_CHAN_ALL;
+			break;
+		default:
+			break;
+	}
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -407,15 +516,21 @@ void CSdrInterface::StartSdr()
 		case SDRIP:
 		case NETSDR:
 			emit NewStatus( RUNNING );
+
+			m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
+			m_TxMsg.AddCItem(CI_RX_CHAN_SETUP);
+			m_TxMsg.AddParm8(m_ChannelMode);
+			SendAscpMsg(&m_TxMsg);
+
 			m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
 			m_TxMsg.AddCItem(CI_RX_RF_FILTER);
-			m_TxMsg.AddParm8(0);
+			m_TxMsg.AddParm8(m_Channel);
 			m_TxMsg.AddParm8(CI_RX_RF_FILTER_AUTO);
 			SendAscpMsg(&m_TxMsg);
 
 			m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
 			m_TxMsg.AddCItem(CI_RX_AD_MODES);
-			m_TxMsg.AddParm8(0);
+			m_TxMsg.AddParm8(m_Channel);
 			m_TxMsg.AddParm8(  CI_AD_MODES_DITHER | CI_AD_MODES_PGA);
 			SendAscpMsg(&m_TxMsg);
 
@@ -435,12 +550,6 @@ void CSdrInterface::StartSdr()
 			m_TxMsg.AddCItem(CI_RX_OUT_SAMPLE_RATE);
 			m_TxMsg.AddParm8(0);
 			m_TxMsg.AddParm32((quint32)m_SampleRate);
-			SendAscpMsg(&m_TxMsg);
-
-			m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
-			m_TxMsg.AddCItem(CI_RX_RF_FILTER);
-			m_TxMsg.AddParm8(0);
-			m_TxMsg.AddParm8(CI_RX_RF_FILTER_AUTO);
 			SendAscpMsg(&m_TxMsg);
 
 			m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
@@ -511,7 +620,7 @@ void CSdrInterface::SetSdrRfGain(qint32 gain)
 	m_RfGain = gain;
 	m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
 	m_TxMsg.AddCItem(CI_RX_RF_GAIN);
-	m_TxMsg.AddParm8(0);
+	m_TxMsg.AddParm8(m_Channel);
 	m_TxMsg.AddParm8((qint8)gain);
 	SendAscpMsg(&m_TxMsg);
 //qDebug()<<"gain "<<gain;
@@ -535,19 +644,34 @@ void CSdrInterface::SetSdrRfGain(qint32 gain)
 						FALSE,
 						m_GainCalibrationOffset-m_RfGain,
 						m_SampleRate);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Sends Center frequency command to SDR
 ///////////////////////////////////////////////////////////////////////////////
-void CSdrInterface::SetRxFreq(quint64 freq)
+quint64 CSdrInterface::SetRxFreq(quint64 freq)
 {
+	if(NOT_CONNECTED == m_Status)	//just return if not conencted to sdr
+		return freq;
+
+	//clamp to range of receiver and any options
+//qDebug()<<"F = "<<freq;
+	if(freq > m_OptionFrequencyRangeMax)	//if greater than max range
+		freq = m_OptionFrequencyRangeMax;
+	if(	(freq > m_BaseFrequencyRangeMax) && ( freq < m_OptionFrequencyRangeMin) )	//if in invalid region
+	{
+		if(	freq > m_CurrentFrequency)	//if last freq lower then go to converter range bottom
+			freq = m_OptionFrequencyRangeMin;
+		else
+			freq = m_BaseFrequencyRangeMax; //else last freq higher then go to base range top
+	}
+	m_CurrentFrequency = freq;
+
 	m_TxMsg.InitTxMsg(TYPE_HOST_SET_CITEM);
 	m_TxMsg.AddCItem(CI_RX_FREQUENCY);
-	m_TxMsg.AddParm8(CI_RX_FREQUENCY_NCO);
+	m_TxMsg.AddParm8(m_Channel);
 	m_TxMsg.AddParm32( (quint32)freq );
-	m_TxMsg.AddParm8(1);
+	m_TxMsg.AddParm8(0);
 	SendAscpMsg(&m_TxMsg);
 
 	if(SDRIP==m_RadioType)
@@ -556,9 +680,10 @@ void CSdrInterface::SetRxFreq(quint64 freq)
 		m_TxMsg.AddCItem(CI_RX_FREQUENCY);
 		m_TxMsg.AddParm8(CI_RX_FREQUENCY_DISPLAY);
 		m_TxMsg.AddParm32( (quint32)freq );
-		m_TxMsg.AddParm8(1);
+		m_TxMsg.AddParm8(0);
 		SendAscpMsg(&m_TxMsg);
 	}
+	return freq;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -795,6 +920,3 @@ void CSdrInterface::ProcessIQData( double* pIQData, int Length)
 		m_pSoundCardOut->PutOutQueue(n, (TYPEREAL*)SoundBuf);
 	}
 }
-
-
-

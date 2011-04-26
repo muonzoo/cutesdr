@@ -6,6 +6,7 @@
 // History:
 //	2010-09-15  Initial creation MSW
 //	2011-03-27  Initial release
+//	2011-04-26  Added types.h include(Thanks Ben AA7AS)
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 //==========================================================================================
@@ -48,6 +49,7 @@
 #include "winsock2.h"
 #else
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <sys/socketvar.h>
 #endif
 

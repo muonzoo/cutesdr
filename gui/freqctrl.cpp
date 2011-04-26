@@ -7,6 +7,7 @@
 // History:
 //	2010-09-15  Initial creation MSW
 //	2011-03-27  Initial release
+//	2011-04-17  Fixed bug with m_Oldfreq being set after emit instead of before
 /////////////////////////////////////////////////////////////////////
 
 //==========================================================================================
@@ -230,8 +231,8 @@ int val;
 			m_LeadZeroPos = i;
 	}
 	// signal the new frequency to world
-	emit NewFrequency( m_freq );
 	m_Oldfreq = m_freq;
+	emit NewFrequency( m_freq );
 	UpdateCtrl(m_LastLeadZeroPos != m_LeadZeroPos);
 	m_LastLeadZeroPos = m_LeadZeroPos;
 }

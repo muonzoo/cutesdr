@@ -7,11 +7,12 @@
 /*	Modified 03-03-2009		msw	   added  CI_RX_OUT_FILE_UPDATEPARAMS        */
 /*  Modified 07-05-2009		msw    added  CI_TX_DA_MODE                      */
 /*  Modified 11-19-2009		msw    add CI_TX_PULSE_MODE,CI_GENERAL_PRODUCT_ID*/
+/*  Modified 04-13-2011		msw    added new NetSDR messages                 */
 /* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 #ifndef PROTOCOLDEFS_H
 #define PROTOCOLDEFS_H
 
-#define ASCP_INTERFACE_VERSION 7
+#define ASCP_INTERFACE_VERSION 9
 
 /*---------------------------------------------------------------------------*/
 /*---------------------> Message Header Defines <----------------------------*/
@@ -74,7 +75,35 @@
   #define GENERAL_STATUS_BOOTBUSY 0x0F	//in bootloader mode programming
   #define GENERAL_STATUS_BOOTERROR 0x80	//in booloader mode with programming error
 
+#define CI_GENERAL_OPTIONS 0x000A
+ #define CI_GENERAL_OPTIONS_REQLEN 4
+ #define CI_GENERAL_OPTIONS_SETRESPLEN 10
+  #define GENERAL_CI_GENERAL_OPTION1_SOUND 1		//sound enabled
+  #define GENERAL_CI_GENERAL_OPTION1_REFPRESENT 2	//reflock present
+  #define GENERAL_CI_GENERAL_OPTION1_DNPRESENT 4	//down converter present
+  #define GENERAL_CI_GENERAL_OPTION1_UPPRESENT 8	//up converter present
+
+  #define GENERAL_CI_GENERAL_OPTION2_CUST1 1		//custom option
+
+  #define GENERAL_CI_GENERAL_OPTION3_MAINVAR (0x0000000F)	//main board variant
+  #define GENERAL_CI_GENERAL_OPTION3_REFVAR  (0x000000F0)	//reflock variant
+  #define GENERAL_CI_GENERAL_OPTION3_DNVAR   (0x00000F00)	//down converter variant
+  #define GENERAL_CI_GENERAL_OPTION3_UPVAR   (0x0000F000)	//up converter variant
+
+
+#define CI_GENERAL_SECURITY_CODE 0x000B
+ #define CI_GENERAL_SECURITY_CODE_REQLEN 8
+ #define CI_GENERAL_SECURITY_CODE_SETRESPLEN 8
+
 /*  Receiver Specific Control Items  */
+//defines for message channel ID for RX1 or RX2 used in many of the Rx control item messages
+#define CI_RX_CHAN_1 0
+#define CI_RX_CHAN_2 2
+#define CI_RX_CHAN_ALL 0xFF
+#define RX_CHAN_1_INDEX (CI_RX_CHAN_1>>1)		//index values for arrays
+#define RX_CHAN_2_INDEX (CI_RX_CHAN_2>>1)
+
+
 #define CI_RX_STATE 0x0018
  #define CI_RX_STATE_REQLEN 5
  #define CI_RX_STATE_SETRESPLEN 8
@@ -110,15 +139,34 @@
   #define NETSDR_PRODID2 0x52
   #define NETSDR_PRODID3 0x04
 
+#define CI_RX_CHAN_SETUP 0x0019
+ #define CI_RX_CHAN_SETUP_REQLEN 4
+ #define CI_RX_CHAN_SETUP_SETRESPLEN 5
+  #define CI_RX_CHAN_SETUP_SINGLE_1 0
+  #define CI_RX_CHAN_SETUP_SINGLE_2 1
+  #define CI_RX_CHAN_SETUP_SINGLE_SUM 2
+  #define CI_RX_CHAN_SETUP_SINGLE_DIF 3
+  #define CI_RX_CHAN_SETUP_DUAL_AD1 4
+  #define CI_RX_CHAN_SETUP_DUAL_AD2 5
+  #define CI_RX_CHAN_SETUP_DUAL_AD12 6
+
 #define CI_RX_FREQUENCY 0x0020
  #define CI_RX_FREQUENCY_REQLEN 5
  #define CI_RX_FREQUENCY_SETRESPLEN 10
-  #define CI_RX_FREQUENCY_NCO 0			//param 1
+  #define CI_RX_FREQUENCY_NCO 0				//param 1 == channel ID
   #define CI_RX_FREQUENCY_DISPLAY 1
+
+#define CI_RX_NCOPHASE 0x0022
+ #define CI_RX_NCOPHASE_REQLEN 5
+ #define CI_RX_NCOPHASE_SETRESPLEN 9		//param 1 == channel ID param 2 == 32bit phase offset
+
+#define CI_RX_ADCGAIN 0x0023
+ #define CI_RX_ADCGAIN_REQLEN 5
+ #define CI_RX_ADCGAIN_SETRESPLEN 7			//param 1 == channel ID param 2 == 16bit A/D gain
 
 #define CI_RX_RF_GAIN 0x0038
  #define CI_RX_RF_GAIN_REQLEN 5
- #define CI_RX_RF_GAIN_SETRESPLEN 6
+ #define CI_RX_RF_GAIN_SETRESPLEN 6			//param 1 == channel ID
 
 #define CI_RX_IF_GAIN 0x0040		//not used by NetSDR/SDRIP
  #define CI_RX_IF_GAIN_REQLEN 5
@@ -138,7 +186,8 @@
   #define CI_RX_RF_FILTER_BP8 8
   #define CI_RX_RF_FILTER_BP9 9
   #define CI_RX_RF_FILTER_BP10 10
-  #define CI_RX_RF_FILTER_BP11 11
+  #define CI_RX_RF_FILTER_BYPASS 11
+  #define CI_RX_RF_FILTER_NOPASS 12
 
 #define CI_RX_AF_GAIN 0x0048
  #define CI_RX_AF_GAIN_REQLEN 5
@@ -149,7 +198,10 @@
  #define CI_RX_AD_MODES_SETRESPLEN 6
   #define CI_AD_MODES_DITHER 0x01	//bit field defs
   #define CI_AD_MODES_PGA 0x02
-  #define CI_AD_MODES_TRANSV 0x04	//use transverter path as input source
+
+#define CI_RX_DOWNCONVERT_SETUP 0x008C		//not used
+ #define CI_RX_DOWNCONVERT_SETUP_REQLEN 5
+ #define CI_RX_DOWNCONVERT_SETUP_SETRESPLEN 6
 
 #define CI_RX_IN_SAMPLE_RATE 0x00B0
  #define CI_RX_IN_SAMPLE_RATE_REQLEN 5
@@ -188,7 +240,7 @@
 
 #define CI_RX_CALIBRATION_DATA 0x00D0
  #define CI_RX_CALIBRATION_DATA_REQLEN 5
- #define CI_RX_CALIBRATION_DATA_SETRESPLEN 7
+ #define CI_RX_CALIBRATION_DATA_SETRESPLEN 7	//param 1 == channel ID param 2== 16 bit DC offset
 
 /*  Transmitter Specific Control Items  */
 #define CI_TX_DA_MODE 0x012A
@@ -198,6 +250,10 @@
   #define CI_DA_MODE_AD 0x01
   #define CI_DA_MODE_NCOTRACK 0x02
   #define CI_DA_MODE_NOISE 0x03
+
+#define CI_TX_CW_MSG 0x0150
+ #define CI_TX_CW_MSG_REQLEN 4
+ #define CI_TX_CW_MSG_SETRESPLEN 16  //param1 = 1 byte WPM, param2 = 1 byte tone/100Hz, param3 == 10 byte ascii msg
 
 /* Aux Port Control Items  */
 #define CI_OPEN_ASYNC_PORT 0x0200
