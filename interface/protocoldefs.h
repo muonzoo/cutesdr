@@ -7,7 +7,7 @@
 /*	Modified 03-03-2009		msw	   added  CI_RX_OUT_FILE_UPDATEPARAMS        */
 /*  Modified 07-05-2009		msw    added  CI_TX_DA_MODE                      */
 /*  Modified 11-19-2009		msw    add CI_TX_PULSE_MODE,CI_GENERAL_PRODUCT_ID*/
-/*  Modified 04-13-2011		msw    added new NetSDR messages                 */
+/*  Modified 04-27-2011		msw    added new NetSDR messages                 */
 /* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 #ifndef PROTOCOLDEFS_H
 #define PROTOCOLDEFS_H
@@ -78,10 +78,11 @@
 #define CI_GENERAL_OPTIONS 0x000A
  #define CI_GENERAL_OPTIONS_REQLEN 4
  #define CI_GENERAL_OPTIONS_SETRESPLEN 10
-  #define GENERAL_CI_GENERAL_OPTION1_SOUND 1		//sound enabled
-  #define GENERAL_CI_GENERAL_OPTION1_REFPRESENT 2	//reflock present
-  #define GENERAL_CI_GENERAL_OPTION1_DNPRESENT 4	//down converter present
-  #define GENERAL_CI_GENERAL_OPTION1_UPPRESENT 8	//up converter present
+ #define GENERAL_CI_GENERAL_OPTION1_SOUND 1		//sound enabled
+ #define GENERAL_CI_GENERAL_OPTION1_REFPRESENT 2	//reflock present
+ #define GENERAL_CI_GENERAL_OPTION1_DNPRESENT 4	//down converter present
+ #define GENERAL_CI_GENERAL_OPTION1_UPPRESENT 8	//up converter present
+ #define GENERAL_CI_GENERAL_OPTION1_X2PRESENT 0x10	//X2 Option present
 
   #define GENERAL_CI_GENERAL_OPTION2_CUST1 1		//custom option
 
