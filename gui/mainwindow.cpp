@@ -209,6 +209,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	if(m_UseTestBench)
 	{
+		//make sure top of dialog is visable(0,0 doesn't include menu bar.Qt bug?)
+		if(m_TestBenchRect.top()<30)
+			m_TestBenchRect.setTop(30);
 		g_pTestBench->setGeometry(m_TestBenchRect);
 		g_pTestBench->show();
 		g_pTestBench->Init();
@@ -541,6 +544,9 @@ CDisplayDlg dlg(this);
 		{	//make TestBench visable if not already
 			if(!g_pTestBench->isVisible())
 			{
+				//make sure top of dialog is visable(0,0 doesn't include menu bar.Qt bug?)
+				if(m_TestBenchRect.top()<30)
+					m_TestBenchRect.setTop(30);
 				g_pTestBench->setGeometry(m_TestBenchRect);
 				g_pTestBench->show();
 				g_pTestBench->Init();
