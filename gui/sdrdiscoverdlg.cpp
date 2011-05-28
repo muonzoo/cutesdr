@@ -7,6 +7,7 @@
 // History:
 //	2010-09-15  Initial creation MSW
 //	2011-03-27  Initial release
+//	2011-05-26  Added support for In Use Status
 /////////////////////////////////////////////////////////////////////
 
 //==========================================================================================
@@ -117,6 +118,7 @@ void CSdrDiscoverDlg::ReadUDPMessages()
 qint64 totallength;
 qint64 length;
 int index=0;
+bool InUse;
 char Buf[2048];	//buffer to hold received UDP packet
 	do
 	{	//loop and get all UDP packets availaable
@@ -128,6 +130,21 @@ char Buf[2048];	//buffer to hold received UDP packet
 		memcpy((void*)&m_DiscovermsgCommon[index], (void*)Buf, length );
 		if( (KEY0 == m_DiscovermsgCommon[index].key[0]) && (KEY1 == m_DiscovermsgCommon[index].key[1]) && (index<MAX_DEVICES) )
 		{
+			InUse = FALSE;
+			if( (QString(m_DiscovermsgCommon[index].name ) == "SDR-IP" ) ||
+				(QString(m_DiscovermsgCommon[index].name ) == "NetSDR" ) )
+			{	//get all information from SDR-IP and NetSDR
+				memcpy((void*)&m_DiscovermsgNetSDR[index], (void*)Buf, sizeof(tDiscover_NETSDR) );
+				if(m_DiscovermsgNetSDR[index].status & (STATUS_BIT_CONNECTED|STATUS_BIT_RUNNING))
+					InUse = TRUE;
+			}
+			else	//get info for SDR-IQ and SDR-14
+			{
+				memcpy((void*)&m_DiscovermsgSDRxx[index], (void*)Buf,  sizeof(tDiscover_NETSDR) );
+				if(m_DiscovermsgSDRxx[index].status & (STATUS_BIT_CONNECTED|STATUS_BIT_RUNNING))
+					InUse = TRUE;
+			}
+
 			quint16 tmp16 = m_DiscovermsgCommon[index].port[1]; tmp16 <<= 8; tmp16 |= m_DiscovermsgCommon[index].port[0];
 			QString str = QString("%1   SN=%2   IP=%3.%4.%5.%6   Port=%7")
 					.arg(m_DiscovermsgCommon[index].name)
@@ -137,6 +154,8 @@ char Buf[2048];	//buffer to hold received UDP packet
 					.arg(m_DiscovermsgCommon[index].ipaddr[1])
 					.arg(m_DiscovermsgCommon[index].ipaddr[0])
 					.arg(tmp16);
+			if(InUse)
+				str.prepend("(In Use) ");
 			ui->listWidget->addItem(str);	//place formated information in listbox
 		}
 	}while( g_UdpDiscoverSocket.hasPendingDatagrams() );

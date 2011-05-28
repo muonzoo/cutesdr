@@ -9,6 +9,7 @@
 //	2010-09-15  Initial creation MSW
 //	2011-03-27  Initial release
 //	2011-04-16  Added Frequency range logic
+//	2011-05-26  Added support for In Use Status allowed wider sideband filters
 /////////////////////////////////////////////////////////////////////
 
 //==========================================================================================
@@ -60,7 +61,7 @@ QUdpSocket g_UdpDiscoverSocket;	//global hack to get around bug in UDP sockets
 /*---------------------------------------------------------------------------*/
 /*--------------------> L O C A L   D E F I N E S <--------------------------*/
 /*---------------------------------------------------------------------------*/
-#define PROGRAM_TITLE_VERSION "CuteSdr 1.01 "
+#define PROGRAM_TITLE_VERSION "CuteSdr 1.02 "
 
 #define MAX_FFTDB 60
 #define MIN_FFTDB -170
@@ -1023,7 +1024,7 @@ void MainWindow::InitDemodSettings()
 
 	m_DemodSettings[DEMOD_USB].txt = "USB";
 	m_DemodSettings[DEMOD_USB].HiCutmin = 500;
-	m_DemodSettings[DEMOD_USB].HiCutmax = 4900;
+	m_DemodSettings[DEMOD_USB].HiCutmax = 20000;
 	m_DemodSettings[DEMOD_USB].LowCutmax = 200;
 	m_DemodSettings[DEMOD_USB].LowCutmin = 0;
 	m_DemodSettings[DEMOD_USB].Symetric = false;
@@ -1032,7 +1033,7 @@ void MainWindow::InitDemodSettings()
 	m_DemodSettings[DEMOD_LSB].HiCutmin = -200;
 	m_DemodSettings[DEMOD_LSB].HiCutmax = 0;
 	m_DemodSettings[DEMOD_LSB].LowCutmax = -500;
-	m_DemodSettings[DEMOD_LSB].LowCutmin = -4900;
+	m_DemodSettings[DEMOD_LSB].LowCutmin = -20000;
 	m_DemodSettings[DEMOD_LSB].Symetric = false;
 
 	m_DemodSettings[DEMOD_CWU].txt = "CWU";

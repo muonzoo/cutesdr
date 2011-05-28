@@ -53,7 +53,8 @@ typedef struct __attribute__ ((__packed__)) _DISCOVER_MSG_NETSDR
 	unsigned char dataipaddr[4];// Alternate data IP address for UDP data  (little endian byte order)
 	unsigned char dataport[2];	// Alternate data Port address for UDP (little endian byte order)
 	unsigned char fpga;			//0 == default cfg   1==custom1    2==custom2
-	unsigned char future[16];	//future use
+	unsigned char status;		//bit 0 == TCP connected   Bit 1 == running  Bit 2-7 not defined
+	unsigned char future[15];	//future use
 }tDiscover_NETSDR;
 
 typedef struct __attribute__ ((__packed__)) _DISCOVER_MSG_SDRXX
@@ -72,8 +73,12 @@ typedef struct __attribute__ ((__packed__)) _DISCOVER_MSG_SDRXX
 	unsigned char subnet[4];	//IP subnet mask (little endian byte order)
 	unsigned char gwaddr[4];	//gateway address (little endian byte order)
 	char connection[32];		//interface connection string null terminated(ex: COM3, DEVTTY5, etc)
-	unsigned char future[16];	//future use
+	unsigned char status;		//bit 0 == TCP connected   Bit 1 == running  Bit 2-7 not defined
+	unsigned char future[15];	//future use
 }tDiscover_SDRxx;
+
+#define STATUS_BIT_CONNECTED (1)
+#define STATUS_BIT_RUNNING (2)
 
 namespace Ui {
     class CSdrDiscoverDlg;
@@ -109,6 +114,8 @@ private:
 	void ReadUDPMessages();
 	QTimer m_Timer;
 	tDiscover_COMMONMSG m_DiscovermsgCommon[MAX_DEVICES];
+	tDiscover_NETSDR m_DiscovermsgNetSDR[MAX_DEVICES];
+	tDiscover_SDRxx m_DiscovermsgSDRxx[MAX_DEVICES];
 };
 
 #endif // SDRDISCOVERDLG_H
