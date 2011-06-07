@@ -21,3 +21,8 @@ This is a github fork of an 'svn clone' of the SF project.
 
 [1] http://rfspace.com/
 
+73,
+Alan Hawrylyshen
+K2ACK
+
+
